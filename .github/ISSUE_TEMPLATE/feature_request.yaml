@@ -1,60 +1,25 @@
       
-name: 🐛 Bug report
-description: Report a bug to help us improve ......
-title: "[Bug]: "
-labels: [bug]
+name: 🚀 Feature request
+description: Suggest an idea for ......
+title: "[Feature]: "
+labels: [feature]
 assignees:
   - Lixvyang
 body:
-  - type: input
-    id: gva
-    attributes:
-      label: 版本
-      description: 请输入您当前使用的项目版本?
-      placeholder: 
-    validations:
-      required: true
-  - type: input
-    id: token
-    attributes:
-      label: Token 数目
-      description: 请输入悬赏的Token数目?
-      placeholder: 500
-    validations:
-      required: true
-  - type: input
-    id: golang
-    attributes:
-      label: Golang 版本
-      description: 请输入您当前使用的GOLANG版本?
-      placeholder: go 1.16
-    validations:
-      required: true
-  - type: dropdown
-    id: reappearance
-    attributes:
-      label: 是否依旧存在
-      description: 是否可以在master分支复现此bug?
-      options:
-        - 可以
-        - 不可以
-        - 未测试
-    validations:
-      required: true
   - type: textarea
     id: desc
     attributes:
-      label: bug描述
-      description: 请简要描述bug以及复现过程.
+      label: 功能描述以及必要性描述
+      description: 您觉得此新功能会为框架带来什么便利.
       placeholder: |
-        1. 首先...
-        2. 然后...
+        1. First...
+        2. Second...
     validations:
       required: true
   - type: textarea
     id: advise
     attributes:
-      label: 修改建议
+      label: 建议和方案
       description: 您有好的建议或者修改方案可以提供给我们。
 
     
