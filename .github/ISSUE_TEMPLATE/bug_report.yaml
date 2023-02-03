@@ -1,28 +1,25 @@
       
 name: 🐛 Bug report
-description: Report a bug to help us improve Gin-Vue-Admin
+description: Report a bug to help us improve ......
 title: "[Bug]: "
 labels: [bug]
 assignees:
-  - piexlmax
-  - songzhibin97
-  - SliverHorn
-  - bypanghu
+  - Lixvyang
 body:
   - type: input
     id: gva
     attributes:
-      label: gin-vue-admin 版本
+      label: 版本
       description: 请输入您当前使用的项目版本?
-      placeholder: 2.4.5Beta
+      placeholder: 
     validations:
       required: true
   - type: input
-    id: node
+    id: token
     attributes:
-      label: Node 版本
-      description: 请输入您当前使用的NODE版本?
-      placeholder: v14.16.0
+      label: Token 数目
+      description: 请输入悬赏的Token数目?
+      placeholder: 500
     validations:
       required: true
   - type: input
