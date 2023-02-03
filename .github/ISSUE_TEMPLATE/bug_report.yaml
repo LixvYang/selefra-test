@@ -1,25 +1,28 @@
       
 name: 🐛 Bug report
-description: Report a bug to help us improve ......
+description: Report a bug to help us improve ...
 title: "[Bug]: "
 labels: [bug]
 assignees:
-  - Lixvyang
+  - piexlmax
+  - songzhibin97
+  - SliverHorn
+  - bypanghu
 body:
   - type: input
     id: gva
     attributes:
-      label: 版本
+      label: .... 版本
       description: 请输入您当前使用的项目版本?
-      placeholder: 
+      placeholder: 2.4.5Beta
     validations:
       required: true
   - type: input
-    id: token
+    id: node
     attributes:
-      label: Token 数目
-      description: 请输入悬赏的Token数目?
-      placeholder: 500
+      label: token 数目
+      description: 请输入悬赏token的数目?
+      placeholder: 
     validations:
       required: true
   - type: input
