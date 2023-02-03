@@ -22,7 +22,7 @@ body:
     attributes:
       label: token 数目
       description: 请输入悬赏token的数目?
-      placeholder: 
+      placeholder: 500
     validations:
       required: true
   - type: input

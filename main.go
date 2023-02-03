@@ -2,19 +2,24 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
+	"selefra-demo/issue"
+	"strings"
+	
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
 	r.POST("/payload", func(c *gin.Context) {
-		buf := make([]byte, 1024*1024)
-		n, _ := c.Request.Body.Read(buf)
-		fmt.Println(string(buf[0:n]))
-		resp := map[string]string{"hello": "world"}
-		c.JSON(http.StatusOK, resp)
+		var githubIssue issue.GithubIssue
+		c.ShouldBind(&githubIssue)
+		strings.
+		// body, err := ioutil.ReadAll(c.Request.Body)
+		// if err != nil {
+		// 	// Handle error
+		// 	log.Fatal(err)
+		// }
+		fmt.Println(githubIssue.Issue.Body)
 	})
 	r.Run(":4567")
 }
