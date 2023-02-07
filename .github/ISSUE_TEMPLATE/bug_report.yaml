@@ -12,7 +12,7 @@ body:
   - type: input
     id: gva
     attributes:
-      label: .... 版本
+      label: 版本
       description: 请输入您当前使用的项目版本?
       placeholder: 2.4.5Beta
     validations:
@@ -22,7 +22,7 @@ body:
     attributes:
       label: token 数目
       description: 请输入悬赏token的数目?
-      placeholder: 500
+      placeholder:
     validations:
       required: true
   - type: input

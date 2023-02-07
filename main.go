@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"selefra-demo/issue"
-	"strings"
-	
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +12,7 @@ func main() {
 	r.POST("/payload", func(c *gin.Context) {
 		var githubIssue issue.GithubIssue
 		c.ShouldBind(&githubIssue)
-		strings.
+		// strings.
 		// body, err := ioutil.ReadAll(c.Request.Body)
 		// if err != nil {
 		// 	// Handle error
