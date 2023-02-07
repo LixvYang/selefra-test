@@ -10,8 +10,6 @@ func main() {
 	fmt.Println(str)
 	_, after, _ := strings.Cut(str, "token 数目")
 	buf, _, _ := strings.Cut(after, "### Golang 版本")
-	// fmt.Println(strings.Trim(buf, ""))
-	fmt.Println(buf)
 	fmt.Println(strings.TrimSpace(buf))
 	fmt.Println(strings.ReplaceAll(buf, "\n", ""))
 	// fmt.Println(aft)

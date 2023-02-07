@@ -2,12 +2,8 @@
 name: 🐛 Bug report
 description: Report a bug to help us improve ...
 title: "[Bug]: "
-labels: [bug]
+labels: [bug] 
 assignees:
-  - piexlmax
-  - songzhibin97
-  - SliverHorn
-  - bypanghu
 body:
   - type: input
     id: gva
@@ -22,7 +18,6 @@ body:
     attributes:
       label: token 数目
       description: 请输入悬赏token的数目?
-      placeholder: 请输入悬赏token的数目?
       value: "500"
     validations:
       required: true
