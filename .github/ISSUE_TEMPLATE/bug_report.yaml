@@ -18,11 +18,11 @@ body:
     validations:
       required: true
   - type: input
-    id: node
+    id: token
     attributes:
       label: token 数目
       description: 请输入悬赏token的数目?
-      placeholder:
+      placeholder: 
     validations:
       required: true
   - type: input
