@@ -1,3 +1,8 @@
+/*
+ * @description:
+ * @param:
+ * @return:
+ */
 package utils
 
 import (
@@ -23,7 +28,7 @@ var (
 	DbName     string
 
 	MailHost string
-	MailPort string
+	MailPort int
 	MailUser string
 	MailPass string
 )
@@ -60,7 +65,7 @@ func LoadData(file *ini.File) {
 
 func LoadMail(file *ini.File) {
 	MailHost = file.Section("mail").Key("MailHost").MustString("")
-	MailPort = file.Section("mail").Key("MailHost").MustString("")
+	MailPort = file.Section("mail").Key("MailPort").MustInt(465)
 	MailUser = file.Section("mail").Key("MailUser").MustString("")
 	MailPass = file.Section("mail").Key("MailPass").MustString("")
 }

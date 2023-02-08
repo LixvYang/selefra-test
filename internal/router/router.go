@@ -1,3 +1,8 @@
+/*
+ * @description:
+ * @param:
+ * @return:
+ */
 package router
 
 import (
@@ -15,6 +20,7 @@ func InitRouter() {
 	{
 		a.POST("/issue/add", issue.AddIssue)
 		a.POST("/pr/add", pr.AddPR)
+		a.POST("/pr/merge", pr.MergePR)
 	}
 
 	_ = r.Run(utils.HttpPort)
