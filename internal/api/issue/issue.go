@@ -35,7 +35,7 @@ func AddIssue(c *gin.Context) {
 	}
 
 	// 充足则从issue发起者扣除500token，数据库记录一下需要扣除的金额      ，等到issue解决或关闭时，再划转
-	if err = user.AddUserPreDeductNum(&model.User{GithubID: github_id}, token_num); err != nil {
+	if err = user.DescUserTokenNum(&model.User{GithubID: github_id}, token_num); err != nil {
 		return
 	}
 

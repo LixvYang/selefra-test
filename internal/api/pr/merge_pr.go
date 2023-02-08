@@ -1,6 +1,11 @@
 package pr
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"io/ioutil"
+
+	"github.com/gin-gonic/gin"
+)
 
 /**
  * @Author: LixvYang 2690688423@qq.com
@@ -15,7 +20,9 @@ import "github.com/gin-gonic/gin"
  */
 func MergePR(c *gin.Context) {
 	// pr是否被合并
-
+	fmt.Println("MergePRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRr")
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	fmt.Println(string(x))
 	// 检测对应的issue  #merged closed
 
 	//查看一下参与人是否绑定钱包，绑定的话，则想pr发起者500token  给issure发起者50token
