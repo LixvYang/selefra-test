@@ -1,10 +1,12 @@
 package model
 
-type User struct {
-	PublicKey string
-	GithubID  string
-	Email     string
-}
+import (
+	"selefra-demo/internal/model"
 
-func CreateUser() {
+	"github.com/gin-gonic/gin"
+)
+
+func CreateUser(c *gin.Context) {
+	u := model.User{}
+	u.CreateUser(&u)
 }

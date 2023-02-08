@@ -1,8 +1,14 @@
+/*
+ * @description:
+ * @param:
+ * @return:
+ */
 package model
 
 import (
 	"errors"
 
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +17,11 @@ type User struct {
 	GithubName string
 	PublicKey  string
 	AvatarUrl  string
-	Email      string
+	EmailLink  string
+	TokenNum   decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"token_num"`
+	// 预扣除token
+	PreDeductNum decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"pre_deduct_num"`
+
 	gorm.Model
 }
 
@@ -61,7 +71,7 @@ func (*User) UpdateUser(data *User) (err error) {
 
 	var maps = make(map[string]interface{})
 	maps["avatar_url"] = data.AvatarUrl
-	maps["email"] = data.Email
+	maps["email"] = data.EmailLink
 	maps["github_name"] = data.GithubName
 	maps["public_key"] = data.PublicKey
 	if err = db.Model(&User{}).Where("github_id = ? ", data.GithubID).Updates(maps).Error; err != nil {
@@ -73,4 +83,41 @@ func (*User) UpdateUser(data *User) (err error) {
 
 	}
 	return nil
+}
+
+func (*User) IncrUserToken(data *User, num decimal.Decimal) (err error) {
+	if err = db.Where("github_id = ?", data.GithubID).Exec("set token = token + ?", num).Error; err != nil {
+		return errors.New("IncrUserToken error: " + err.Error())
+	}
+	return nil
+}
+
+// 查询某个人的token数目
+func (*User) GetUserTokenNum(data *User) (num decimal.Decimal, err error) {
+	var user User
+	if err = db.Where("github_id = ?", data.GithubID).Find(&user).Error; err != nil {
+		return decimal.New(0, 0), errors.New("GetUserTokenNum error: " + err.Error())
+	}
+	return user.TokenNum, nil
+}
+
+func (*User) AddUserPreDeductNum(data *User, pre_deduct_num decimal.Decimal) (err error) {
+	if err = db.Where("github_id = ?", data.GithubID).Exec("set pre_deduct_num = pre_deduct_num + ?",
+		pre_deduct_num).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (*User) ListUsers() ([]User, error) {
+	// List users
+	var users []User
+	if err := db.Model(&User{}).Error; err != nil {
+		return users, err
+	}
+
+	if err := db.Where("").Order("id desc").Find(&users).Error; err != nil {
+		return users, err
+	}
+	return users, nil
 }
