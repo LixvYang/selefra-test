@@ -46,15 +46,28 @@ func MergePR(c *gin.Context) {
 
 	sumToken := sumIssueNums(issueIds)
 	github_id := fmt.Sprint(githubPR.Sender.ID)
+
+	user = model.User{
+		GithubID:   github_id,
+		GithubName: githubPR.Sender.Login,
+		PublicKey:  "",
+		AvatarUrl:  githubPR.Sender.AvatarURL,
+		EmailLink:  "",
+	}
+	if user.CheckUser(&user); err != nil {
+		err = user.CreateUser(&user)
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+	}
+
 	// sum 加总和
-	err = user.IncrUserToken(&model.User{GithubID: github_id}, sumToken); if err != nil {
+	err = user.IncrUserToken(&model.User{GithubID: github_id}, sumToken)
+	if err != nil {
 		log.Fatalf("增加失败")
 		return
 	}
-	
-	
 
-	
 	// 通过token num 总和 如果没有绑定
 	// 合并成功
 	// 查看一下参与人是否绑定钱包，绑定的话，则向pr发起者500token  给issure发起者50token

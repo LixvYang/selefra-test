@@ -85,7 +85,7 @@ func (*User) UpdateUser(data *User) (err error) {
 }
 
 func (*User) IncrUserToken(data *User, num decimal.Decimal) (err error) {
-	if err = db.Where("github_id = ?", data.GithubID).Exec("set token = token + ?", num).Error; err != nil {
+	if err = db.Model(&User{}).Where("github_id = ?", data.GithubID).Exec("set token = token + ?", num).Error; err != nil {
 		return errors.New("IncrUserToken error: " + err.Error())
 	}
 	return nil
@@ -114,7 +114,7 @@ func (*User) ListUsers() ([]User, error) {
 }
 
 func (*User) DescUserTokenNum(data *User, num decimal.Decimal) (err error) {
-	if err = db.Where("github_id = ?", data.GithubID).Exec("set token_num = token_num - ?", num).Error; err != nil {
+	if err = db.Model(&User{}).Where("github_id = ?", data.GithubID).Exec("set token_num = token_num - ?", num).Error; err != nil {
 		return errors.New(err.Error())
 	}
 	return nil
