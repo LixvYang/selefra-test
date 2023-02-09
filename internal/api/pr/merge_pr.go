@@ -19,14 +19,37 @@ import (
  * @param {*gin.Context} c
  */
 func MergePR(c *gin.Context) {
-	// pr是否被合并
-	fmt.Println("MergePRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRr")
+	// var user model.User
+	var githubPR GithubPR
+	c.ShouldBind(&githubPR)
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println(string(x))
-	// 检测对应的issue  #merged closed
 
-	//查看一下参与人是否绑定钱包，绑定的话，则想pr发起者500token  给issure发起者50token
+	// pr是否被合并
+	// 检测对应的issue  #merged closed
+	if githubPR.Action != "closed" && !githubPR.PullRequest.Merged {
+		//不是合并直接退出
+		return
+	}
+
+	// 合并成功
+	// 查看一下参与人是否绑定钱包，绑定的话，则向pr发起者500token  给issure发起者50token
+	//
+	// github_id := fmt.Sprint(githubPR.Sender.ID)
+	// bind := user.CheckUserBind(&model.User{GithubID: github_id})
+	// if !bind {
+	// 	// 没有绑定
+	// 	user.IncrUserTempToken(&model.User{GithubID: github_id})
+	// 	return
+	// }
 
 	// 没有的话数据库暂时存储token等待github绑定钱包时一起绑定
 
 }
+
+//
+
+// func getIssueNum(githubPR *GithubPR) (int, error) {
+// 	var issueNum int
+
+// }
