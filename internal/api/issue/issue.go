@@ -52,7 +52,7 @@ func AddIssue(c *gin.Context) {
 	issue.TokenNum = token_num
 	// 这里是demo
 	// TODO
-	issue.IssueNumber = fmt.Sprint(githubIssue.Issue.Number)
+	issue.IssueNumber = "#" + fmt.Sprint(githubIssue.Issue.Number)
 	issue.Uid = github_id
 	if err = issue.CreateIssue(&issue); err != nil {
 		// 创建Issue错误
