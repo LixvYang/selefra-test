@@ -133,9 +133,9 @@ func (*User) CheckUserBind(data *User) bool {
 }
 
 // 增加临时存储token
-func (*User) IncrUserTempToken(data *User, num decimal.Decimal) (err error) {
-	if err = db.Where("github_id = ?", data.GithubID).Exec("set temp_token = temp_token + ?", num).Error; err != nil {
-		return errors.New("IncrUserTempToken" + err.Error())
-	}
-	return nil
-}
+// func (*User) IncrUserTempToken(data *User, num decimal.Decimal) (err error) {
+// 	if err = db.Where("github_id = ?", data.GithubID).Exec("set temp_token = temp_token + ?", num).Error; err != nil {
+// 		return errors.New("IncrUserTempToken" + err.Error())
+// 	}
+// 	return nil
+// }

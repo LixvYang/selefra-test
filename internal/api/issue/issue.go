@@ -1,9 +1,8 @@
 package issue
 
 import (
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 
@@ -16,48 +15,53 @@ import (
 )
 
 func AddIssue(c *gin.Context) {
-	var user model.User
+	// var user model.User
 	var issue model.Issue
 	var githubIssue GithubIssue
 	c.ShouldBind(&githubIssue)
-
-	x, _ := ioutil.ReadAll(c.Request.Body)
-	fmt.Println(string(x))
+	// fmt.Println("来这里")
+	// x, _ := ioutil.ReadAll(c.Request.Body)
+	// fmt.Println(string(x))
+	if githubIssue.Action == "labeled" {
+		return
+	}
 
 	// read token
 	github_id, token_num, err := getTokenNums(&githubIssue)
 	if err != nil {
+		log.Fatalf("getTokenNums err !")
 		c.JSON(http.StatusOK, "error: get github_id or token error!"+err.Error())
 		return
 	}
 
 	// 检测issue发起者的token是否足够，不足则关闭issue
 	// 给我传递过来github_id
-	if !checkTokenEnough(github_id, token_num) {
-		c.JSON(http.StatusOK, "error: token not enough.")
-		// close issue
-		return
-	}
+	// if !checkTokenEnough(github_id, token_num) {
+	// 	c.JSON(http.StatusOK, "error: token not enough.")
+	// 	// close issue
+	// 	return
+	// }
 
 	// 充足则从issue发起者扣除500token，数据库记录一下需要扣除的金额      ，等到issue解决或关闭时，再划转
-	if err = user.DescUserTokenNum(&model.User{GithubID: github_id}, token_num); err != nil {
-		return
-	}
+	// if err = user.DescUserTokenNum(&model.User{GithubID: github_id}, token_num); err != nil {
+	// 	return
+	// }
 
 	// 记录对应的Issure
 	issue.Body = githubIssue.Issue.Body
 	issue.TokenNum = token_num
 	// 这里是demo
 	// TODO
-	issue.IssureNumber = "..."
+	issue.IssueNumber = fmt.Sprint(githubIssue.Issue.Number)
 	issue.Uid = github_id
 	if err = issue.CreateIssue(&issue); err != nil {
 		// 创建Issue错误
+		log.Fatalf("CreateIssue err !", err)
 		return
 	}
 
 	// send this issure to every one who participant
-	sendParticipantEmail(githubIssue)
+	// sendParticipantEmail(githubIssue)
 
 	c.JSON(http.StatusOK, "success!")
 	return
@@ -65,19 +69,18 @@ func AddIssue(c *gin.Context) {
 
 func getTokenNums(githubIssue *GithubIssue) (github_id string, token decimal.Decimal, err error) {
 	str := githubIssue.Issue.Body
-	_, after, found := strings.Cut(str, "token 数目")
-	if !found {
-		return "", decimal.Decimal{}, errors.New("Not found tokens")
-	}
+	_, after, _ := strings.Cut(str, "token 数目")
 	buf, _, _ := strings.Cut(after, "### Golang 版本")
 	fmt.Println(strings.ReplaceAll(buf, "\n", ""))
+	token, _ = decimal.NewFromString(strings.ReplaceAll(buf, "\n", ""))
+	// tokenNum := strings.Split(str, "\n\n### token 数目\n\n")[1]
+	// tokenNum = strings.Split(tokenNum, "\n\n")[0]
+	// token, err = decimal.NewFromString(tokenNum)
+	// if err != nil {
+	// 	return "", decimal.Decimal{}, errors.New("Error" + err.Error())
+	// }
 
-	token, err = decimal.NewFromString(buf)
-	if err != nil {
-		return "", decimal.Decimal{}, errors.New("Error" + err.Error())
-	}
-
-	return string(githubIssue.Issue.User.ID), token, nil
+	return fmt.Sprint(githubIssue.Issue.User.ID), token, nil
 }
 
 // 检测issue发起者token是否足够
