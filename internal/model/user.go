@@ -19,6 +19,8 @@ type User struct {
 	AvatarUrl  string
 	EmailLink  string
 	TokenNum   decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"token_num"`
+	// 若没有绑定PublicKey, 临时存储token
+	TempToken decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"temp_token"`
 	gorm.Model
 }
 
@@ -114,6 +116,26 @@ func (*User) ListUsers() ([]User, error) {
 func (*User) DescUserTokenNum(data *User, num decimal.Decimal) (err error) {
 	if err = db.Where("github_id = ?", data.GithubID).Exec("set token_num = token_num - ?", num).Error; err != nil {
 		return errors.New(err.Error())
+	}
+	return nil
+}
+
+func (*User) CheckUserBind(data *User) bool {
+	var u User
+	var err error
+	if err = db.Where("github_id = ?", data.GithubID).First(&u).Error; err != nil {
+		return false
+	}
+	if u.PublicKey == "" {
+		return false
+	}
+	return true
+}
+
+// 增加临时存储token
+func (*User) IncrUserTempToken(data *User, num decimal.Decimal) (err error) {
+	if err = db.Where("github_id = ?", data.GithubID).Exec("set temp_token = temp_token + ?", num).Error; err != nil {
+		return errors.New("IncrUserTempToken" + err.Error())
 	}
 	return nil
 }

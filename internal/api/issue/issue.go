@@ -16,11 +16,12 @@ import (
 
 func AddIssue(c *gin.Context) {
 	var user model.User
+	var issue model.Issue
 	var githubIssue GithubIssue
 	c.ShouldBind(&githubIssue)
 
 	// read token
-	github_id, token_num, err := getTokenNums(githubIssue)
+	github_id, token_num, err := getTokenNums(&githubIssue)
 	if err != nil {
 		c.JSON(http.StatusOK, "error: get github_id or token error!"+err.Error())
 		return
@@ -39,6 +40,18 @@ func AddIssue(c *gin.Context) {
 		return
 	}
 
+	// 记录对应的Issure
+	issue.Body = githubIssue.Issue.Body
+	issue.TokenNum = token_num
+	// 这里是demo
+	// TODO
+	issue.IssureNumber = "..."
+	issue.Uid = github_id
+	if err = issue.CreateIssue(&issue); err != nil {
+		// 创建Issue错误
+		return
+	}
+
 	// send this issure to every one who participant
 	sendParticipantEmail(githubIssue)
 
@@ -46,7 +59,7 @@ func AddIssue(c *gin.Context) {
 	return
 }
 
-func getTokenNums(githubIssue GithubIssue) (github_id string, token decimal.Decimal, err error) {
+func getTokenNums(githubIssue *GithubIssue) (github_id string, token decimal.Decimal, err error) {
 	str := githubIssue.Issue.Body
 	_, after, found := strings.Cut(str, "token 数目")
 	if !found {

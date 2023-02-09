@@ -3,10 +3,14 @@
  * @param:
  * @return:
  */
+/*
+ * @description:
+ * @param:
+ * @return:
+ */
 package router
 
 import (
-	"fmt"
 	"selefra-demo/internal/api/issue"
 	"selefra-demo/internal/api/pr"
 	"selefra-demo/internal/utils"
@@ -22,14 +26,11 @@ func InitRouter() {
 }
 
 func gateway(c *gin.Context) {
-	fmt.Println("来了一个")
 	githubEvent := c.Request.Header.Get("X-GitHub-Event")
-	fmt.Println(githubEvent)
-
-	switch {
-	case githubEvent == "issues":
+	switch githubEvent {
+	case "issues":
 		issue.AddIssue(c)
-	case githubEvent == "pull_request":
+	case "pull_request":
 		pr.MergePR(c)
 	}
 }
