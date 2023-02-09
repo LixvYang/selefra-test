@@ -3,7 +3,6 @@ name: 🐛 Bug report
 description: Report a bug to help us improve ...
 title: "[Bug]: "
 labels: [bug] 
-assignees:
 body:
   - type: input
     id: gva
