@@ -54,7 +54,8 @@ func MergePR(c *gin.Context) {
 		AvatarUrl:  githubPR.Sender.AvatarURL,
 		EmailLink:  "",
 	}
-	if user.CheckUser(&user); err != nil {
+	if err = user.CheckUser(&user); err != nil {
+		fmt.Println("用户不存在")
 		err = user.CreateUser(&user)
 		if err != nil {
 			log.Fatalf(err.Error())
