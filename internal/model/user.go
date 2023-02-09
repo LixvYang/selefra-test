@@ -19,9 +19,6 @@ type User struct {
 	AvatarUrl  string
 	EmailLink  string
 	TokenNum   decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"token_num"`
-	// 预扣除token
-	PreDeductNum decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"pre_deduct_num"`
-
 	gorm.Model
 }
 
@@ -101,14 +98,6 @@ func (*User) GetUserTokenNum(data *User) (num decimal.Decimal, err error) {
 	return user.TokenNum, nil
 }
 
-func (*User) AddUserPreDeductNum(data *User, pre_deduct_num decimal.Decimal) (err error) {
-	if err = db.Where("github_id = ?", data.GithubID).Exec("set pre_deduct_num = pre_deduct_num + ?",
-		pre_deduct_num).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
 func (*User) ListUsers() ([]User, error) {
 	// List users
 	var users []User
@@ -120,4 +109,11 @@ func (*User) ListUsers() ([]User, error) {
 		return users, err
 	}
 	return users, nil
+}
+
+func (*User) DescUserTokenNum(data *User, num decimal.Decimal) (err error) {
+	if err = db.Where("github_id = ?", data.GithubID).Exec("set token_num = token_num - ?", num).Error; err != nil {
+		return errors.New(err.Error())
+	}
+	return nil
 }
