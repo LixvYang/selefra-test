@@ -85,7 +85,8 @@ func (*User) UpdateUser(data *User) (err error) {
 }
 
 func (*User) IncrUserToken(data *User, num decimal.Decimal) (err error) {
-	if err = db.Model(&User{}).Where("github_id = ?", data.GithubID).Exec("set token_num = token_num + ?", num).Error; err != nil {
+	// if err = db.Model(&User{}).Where("s
+	if err = db.Exec("update user set token_num = token_num + ? where github_id = ?", num, data.GithubID).Error; err != nil {
 		return errors.New("IncrUserToken error: " + err.Error())
 	}
 	return nil
