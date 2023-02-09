@@ -1,3 +1,8 @@
+/*
+ * @description:
+ * @param:
+ * @return:
+ */
 package email
 
 import (
@@ -45,6 +50,10 @@ func ConvertToUsers(user []model.User) string {
 	for i := 0; i < len(user); i++ {
 		usersLink += user[i].EmailLink + ","
 	}
+	if len(usersLink) == 0 {
+		return ""
+	}
+
 	usersLink = usersLink[:len(usersLink)-1]
 	return usersLink
 }

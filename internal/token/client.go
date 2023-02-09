@@ -3,9 +3,11 @@ package token
 import (
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"log"
 	"math"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -17,10 +19,11 @@ import (
 type T struct{}
 
 const (
-	BSC_RPC_URL      = "https://endpoints.omniatech.io/v1/bsc/testnet/public"
-	CONTRACT_ADDR    = "0xbF47aBE2d374313Eda18C77359E50dC3281A4D36"
-	ACCOUNT_PUB_KEY  = "0x0eecD003Aa72554354527BeD08dC88f971d881DF"
-	ACCOUNT_PRIV_KEY = "f4a7287be8fde0ea3a350956ab2c0e49c0c1e63be354d28c1e1cca8b3978af8e"
+	JSON  = `{"version":3,"id":"69f11cc4-7866-42bf-bf04-81bb0b021f1b","address":"0eecd003aa72554354527bed08dc88f971d881df","crypto":{"ciphertext":"0862b95ac264cb16324f4b5c26aac9727c7a14ae2ce35c0514b7b4f18828ee9d","cipherparams":{"iv":"0484e8078c0bbbb7dc27d1944ae08a47"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"8b20b0226c6c6f435c374ebcaf963f9c6dc93fedf4fdcea79fb0a2faddec389c","n":262144,"r":8,"p":1},"mac":"0545955a32b69b226703c9e1f14537c1abb6a77a268694ee7a1f02156ef370bd"}}`
+	BSC_RPC_URL         = "https://endpoints.omniatech.io/v1/bsc/testnet/public"
+	CONTRACT_ADDR       = "0xEf42420F5d2815CbB2700d03D527F0F89bdA9503"
+	MY_ACCOUNT_PUB_KEY  = "0x0eecD003Aa72554354527BeD08dC88f971d881DF"
+	MY_ACCOUNT_PRIV_KEY = "f4a7287be8fde0ea3a350956ab2c0e49c0c1e63be354d28c1e1cca8b3978af8e"
 )
 
 var tokenRpc TokenRPC
@@ -31,7 +34,7 @@ type TokenRPC struct {
 	token *Token
 }
 
-func init() {
+func Init() {
 	tokenRpc.conn, err = ethclient.Dial(BSC_RPC_URL)
 	if err != nil {
 		defer tokenRpc.conn.Close()
@@ -87,14 +90,6 @@ func (t *T) TotalSupply() int64 {
 	return totalSupply.Int64()
 }
 
-func (t *T) GetOwner() string {
-	ownerAddress, err := tokenRpc.token.TokenCaller.GetOwner(&bind.CallOpts{})
-	if err != nil {
-		log.Fatal("Get GetOwner Error: ", err)
-	}
-	return ownerAddress.String()
-}
-
 func (t *T) Decimals() uint8 {
 	decimals, err := tokenRpc.token.TokenCaller.Decimals(&bind.CallOpts{})
 	if err != nil {
@@ -120,7 +115,7 @@ func (t *T) Allowance(addr0, addr1 string) string {
 }
 
 func (t *T) AlTrlowance(addr0, addr1 string) string {
-	privateKey, err := crypto.HexToECDSA(ACCOUNT_PRIV_KEY)
+	privateKey, err := crypto.HexToECDSA(MY_ACCOUNT_PRIV_KEY)
 	if err != nil {
 		log.Fatal("Err: ", err)
 	}
@@ -143,11 +138,13 @@ func (t *T) AlTrlowance(addr0, addr1 string) string {
 }
 
 // 自己发送交易
-func (t *T) Transfer(toAddress string, count int64) {
-	privateKey, err := crypto.HexToECDSA(ACCOUNT_PRIV_KEY)
+func (t *T) Transfer(toAddress string, count int64) error {
+	privateKey, err := crypto.HexToECDSA(MY_ACCOUNT_PRIV_KEY)
 	if err != nil {
 		log.Fatal("Err: ", err)
 	}
+	fmt.Println(111)
+
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
@@ -162,6 +159,7 @@ func (t *T) Transfer(toAddress string, count int64) {
 	gasTipCap, err := tokenRpc.conn.SuggestGasTipCap(context.Background())
 	var data []byte
 	chainID, err := tokenRpc.conn.NetworkID(context.Background())
+	fmt.Println(222)
 	tx := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
 		Nonce:     nonce,
@@ -173,7 +171,41 @@ func (t *T) Transfer(toAddress string, count int64) {
 		Data:      data,
 	})
 	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), privateKey)
+	fmt.Println(333)
+
 	err = tokenRpc.conn.SendTransaction(context.Background(), signedTx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// func (t *T) T(toAddress string, count int64) error {
+// 	tx, err := tokenRpc.token.Transfer(&bind.TransactOpts{
+// 		From:   MY_ACCOUNT_PUB_KEY,
+// 		Signer: auth.Signer,
+// 		Value:  nil,
+// 	}, common.HexToAddress(toAddress), big.NewInt(520))
+
+// }
+
+func (t *T) T(toAddress string, count int64) error {
+	auth, err := bind.NewTransactor(strings.NewReader(JSON), "f4a7287be8fde0ea3a350956ab2c0e49c0c1e63be354d28c1e1cca8b3978af8e")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	tx, err := tokenRpc.token.Transfer(auth, common.HexToAddress(toAddress), big.NewInt(520))
+	// 等待交易完成
+	ctx := context.Background()
+	_, err = bind.WaitMined(ctx, tokenRpc.conn, tx)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Transfer Successful!")
+	return nil
 }
 
 func (t *T) TransferFrom(privKey string, toAddress string, count int64) {
@@ -207,4 +239,12 @@ func (t *T) TransferFrom(privKey string, toAddress string, count int64) {
 	})
 	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), privateKey)
 	err = tokenRpc.conn.SendTransaction(context.Background(), signedTx)
+}
+
+// 授权B可以调用其中100个代币 —— approve(B，100)；
+func (t *T) Approve(_spender string, _value int64) {
+	_, err := tokenRpc.token.TokenTransactor.Approve(&bind.TransactOpts{}, common.HexToAddress(_spender), big.NewInt(_value))
+	if err != nil {
+		return
+	}
 }
