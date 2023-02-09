@@ -3,7 +3,6 @@ name: 🐛 Bug report
 description: Report a bug to help us improve ...
 title: "[Bug]: "
 labels: [bug] 
-assignees:
 body:
   - type: input
     id: gva
@@ -18,6 +17,7 @@ body:
     attributes:
       label: token 数目
       description: 请输入悬赏token的数目?
+      placeholder: 
       value: "500"
     validations:
       required: true

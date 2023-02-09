@@ -3,6 +3,7 @@ package issue
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -19,6 +20,9 @@ func AddIssue(c *gin.Context) {
 	var issue model.Issue
 	var githubIssue GithubIssue
 	c.ShouldBind(&githubIssue)
+
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	fmt.Println(string(x))
 
 	// read token
 	github_id, token_num, err := getTokenNums(&githubIssue)
