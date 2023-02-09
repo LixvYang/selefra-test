@@ -27,10 +27,10 @@ func InitRouter() {
 
 func gateway(c *gin.Context) {
 	githubEvent := c.Request.Header.Get("X-GitHub-Event")
-	switch githubEvent {
-	case "issues":
+	switch {
+	case githubEvent == "issues":
 		issue.AddIssue(c)
-	case "pull_request":
+	case githubEvent == "pull_request":
 		pr.MergePR(c)
 	}
 }

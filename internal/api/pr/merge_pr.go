@@ -20,11 +20,12 @@ import (
  */
 func MergePR(c *gin.Context) {
 	// var user model.User
+	fmt.Println("来这里")
 	var githubPR GithubPR
-	c.ShouldBind(&githubPR)
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	fmt.Println(string(x))
-
+	
+	c.ShouldBind(&githubPR)
 	// pr是否被合并
 	// 检测对应的issue  #merged closed
 	if githubPR.Action != "closed" && !githubPR.PullRequest.Merged {
