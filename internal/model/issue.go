@@ -4,15 +4,17 @@ import (
 	"errors"
 
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm"
 )
 
 type Issue struct {
 	// uid == github_id
-	Uid          string `gorm:"type:varchar(255);not null" json:"uid"`
-	User         User   `gorm:"foreignKey:uid" json:"user"`
+	gorm.Model
+	Uid         string `gorm:"type:varchar(255);not null" json:"uid"`
+	User        User   `gorm:"foreignKey:uid" json:"user"`
 	IssueNumber string
-	Body         string
-	TokenNum     decimal.Decimal
+	Body        string
+	TokenNum    decimal.Decimal
 }
 
 func (*Issue) CreateIssue(data *Issue) (err error) {

@@ -27,7 +27,6 @@ body:
       label: PublicKey
       description: 请输入你的PublicKey
       placeholder: 
-      value: ""
     validations:
       required: true
   - type: input
