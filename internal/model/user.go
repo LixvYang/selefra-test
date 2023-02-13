@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type User struct {
 
 // 增删查改
 func (*User) CreateUser(data *User) (err error) {
+	fmt.Println(data)
 	if err = db.Create(&data).Error; err != nil {
 		return errors.New("CreateUser error: " + err.Error())
 	}
@@ -40,6 +42,7 @@ func (*User) CheckUser(data *User) (err error) {
 	var user User
 	err = db.Model(&User{}).Where("github_id = ?", data.GithubID).Last(&user).Error
 	if user.GithubID == "" {
+		// 不存在
 		return errors.New("CheckUser error: " + err.Error())
 	}
 	return nil
