@@ -8,6 +8,7 @@ import (
 )
 
 type User struct {
+	gorm.Model
 	GithubID   string
 	GithubName string
 	PublicKey  string
@@ -16,7 +17,6 @@ type User struct {
 	TokenNum   decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"token_num"`
 	// 若没有绑定PublicKey, 临时存储token
 	TempToken decimal.Decimal `gorm:"type:decimal(36,18);default 0" json:"temp_token"`
-	gorm.Model
 }
 
 // 增删查改

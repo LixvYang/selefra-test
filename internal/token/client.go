@@ -19,7 +19,7 @@ import (
 type T struct{}
 
 const (
-	JSON  = `{"version":3,"id":"69f11cc4-7866-42bf-bf04-81bb0b021f1b","address":"0eecd003aa72554354527bed08dc88f971d881df","crypto":{"ciphertext":"0862b95ac264cb16324f4b5c26aac9727c7a14ae2ce35c0514b7b4f18828ee9d","cipherparams":{"iv":"0484e8078c0bbbb7dc27d1944ae08a47"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"8b20b0226c6c6f435c374ebcaf963f9c6dc93fedf4fdcea79fb0a2faddec389c","n":262144,"r":8,"p":1},"mac":"0545955a32b69b226703c9e1f14537c1abb6a77a268694ee7a1f02156ef370bd"}}`
+	JSON                = `{"version":3,"id":"69f11cc4-7866-42bf-bf04-81bb0b021f1b","address":"0eecd003aa72554354527bed08dc88f971d881df","crypto":{"ciphertext":"0862b95ac264cb16324f4b5c26aac9727c7a14ae2ce35c0514b7b4f18828ee9d","cipherparams":{"iv":"0484e8078c0bbbb7dc27d1944ae08a47"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"8b20b0226c6c6f435c374ebcaf963f9c6dc93fedf4fdcea79fb0a2faddec389c","n":262144,"r":8,"p":1},"mac":"0545955a32b69b226703c9e1f14537c1abb6a77a268694ee7a1f02156ef370bd"}}`
 	BSC_RPC_URL         = "https://endpoints.omniatech.io/v1/bsc/testnet/public"
 	CONTRACT_ADDR       = "0xEf42420F5d2815CbB2700d03D527F0F89bdA9503"
 	MY_ACCOUNT_PUB_KEY  = "0x0eecD003Aa72554354527BeD08dC88f971d881DF"
@@ -159,6 +159,10 @@ func (t *T) Transfer(toAddress string, count int64) error {
 	gasTipCap, err := tokenRpc.conn.SuggestGasTipCap(context.Background())
 	var data []byte
 	chainID, err := tokenRpc.conn.NetworkID(context.Background())
+	if err != nil {
+		fmt.Println("chainID error")
+		return err
+	}
 	fmt.Println(222)
 	tx := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
@@ -171,10 +175,15 @@ func (t *T) Transfer(toAddress string, count int64) error {
 		Data:      data,
 	})
 	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), privateKey)
+	if err != nil {
+		fmt.Println(444)
+		return err
+	}
 	fmt.Println(333)
 
 	err = tokenRpc.conn.SendTransaction(context.Background(), signedTx)
 	if err != nil {
+		fmt.Println(555)
 		return err
 	}
 	return nil
@@ -190,13 +199,22 @@ func (t *T) Transfer(toAddress string, count int64) error {
 // }
 
 func (t *T) T(toAddress string, count int64) error {
-	auth, err := bind.NewTransactor(strings.NewReader(JSON), "f4a7287be8fde0ea3a350956ab2c0e49c0c1e63be354d28c1e1cca8b3978af8e")
+	chainID, err := tokenRpc.conn.NetworkID(context.Background())
+	if err != nil {
+		fmt.Println("chainID error")
+		return err
+	}
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(JSON), "night-wear-prevent-area-rail-concert-slab-intact-mutual-romance-defense-dish", chainID)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	tx, err := tokenRpc.token.Transfer(auth, common.HexToAddress(toAddress), big.NewInt(520))
+	tx, err := tokenRpc.token.Transfer(auth, common.HexToAddress(toAddress), big.NewInt(int64(math.Pow(10, 15)*float64(count))))
+	if err != nil {
+		fmt.Println("token.Transfer 错误")
+		log.Fatalf("Transfer err: %s", err)
+	}
 	// 等待交易完成
 	ctx := context.Background()
 	_, err = bind.WaitMined(ctx, tokenRpc.conn, tx)
