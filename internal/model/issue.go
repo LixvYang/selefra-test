@@ -26,6 +26,7 @@ func (*Issue) CreateIssue(data *Issue) (err error) {
 
 func (*Issue) GetIssue(data *Issue) (Issue, error) {
 	var issue Issue
+	
 	if err := db.Select("uid, body, token_num").Where("issue_number = ?", data.IssueNumber).Find(&issue).Error; err != nil {
 		return issue, errors.New("GetIssue error: " + err.Error())
 	}
