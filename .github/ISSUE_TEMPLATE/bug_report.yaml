@@ -22,14 +22,6 @@ body:
     validations:
       required: true
   - type: input
-    id: publicKey
-    attributes:
-      label: PublicKey
-      description: 请输入你的PublicKey
-      placeholder: 
-    validations:
-      required: true
-  - type: input
     id: golang
     attributes:
       label: Golang 版本
