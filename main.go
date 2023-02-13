@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+
+	
 	utils.InitSetting.Do(utils.Init)
 	model.InitDB.Do(model.InitDb)
 
