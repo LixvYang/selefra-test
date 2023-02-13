@@ -62,21 +62,19 @@ func AddIssue(c *gin.Context) {
 
 	// 如果用户不存在,则创建用户
 	user := model.User{
-		GithubID: github_id,
+		GithubID:   github_id,
 		GithubName: githubIssue.Sender.Login,
-		PublicKey : "",
-		AvatarUrl : githubIssue.Sender.AvatarURL,
-		EmailLink : "",
-	}	
-	if user.CheckUser(&user); err != nil {
-		err = user.CreateUser(&user)
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
+		PublicKey:  "",
+		AvatarUrl:  githubIssue.Sender.AvatarURL,
+		EmailLink:  "",
+	}
+	err = user.CheckUser(&user)
+	if err != nil {
+		user.CreateUser(&user)
 	}
 
 	// err = user.CreateUser(&user); if err != nil {
-		
+
 	// }
 	// send this issure to every one who participant
 	// sendParticipantEmail(githubIssue)
